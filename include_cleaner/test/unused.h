@@ -1,0 +1,3 @@
+struct UnusedStruct {
+    int field;
+};

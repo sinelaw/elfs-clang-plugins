@@ -1,0 +1,4 @@
+Maintainers
+*.so
+*.o
+out.fail/

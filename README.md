@@ -3,6 +3,7 @@
 A collection of clang plugins for safer C programming. The plugins detect problems at compile time.
 
 * enums_conversion: Finds implicit casts to/from enums and integral types
+* `warn_unused_result`: Warns about functions declared without the `warn_unused_result` attribute
 * include_cleaner: Finds unused #includes
 * large_assignment: Finds large copies in assignments and initializations (size is configurable)
 * private: Prevents access to fields of structs that are defined in private.h files
@@ -72,6 +73,23 @@ Note: The enums_conversion plugin uses AST matching to find violations - it work
 patterns. A more complete approach would be to traverse the entire AST and perform a complete type-checking pass (or to
 augment the existing clang type checker, but as far as I can tell, a clang plugin can't do that). However, we found the
 AST matching approach to be quite effective, and it was easy to implement.
+
+## `warn_unused_result`
+
+Both clang and gcc support the attribute `warn_unused_result` on functions, but provide no way to treat all functions as if they have the attribute, nor is there a way to warn about functions that don't have the attribute.
+
+The `warn_unused_result` plugin will emit a warning functions that **lack a `warn_unused_result` attribute**. The plugin only considers functions declared or defined in the current compilation unit.
+
+The plugin accepts an optional arg, `--static-only` which causes it to warn only about static functions (for when changing external APIs is too much work).
+
+Example:
+
+    int foo(void);
+
+Compiler output:
+
+    /tmp/test.c:1:5: warning: missing attribute warn_unused_result
+    int foo(void);
 
 ## include_cleaner
 

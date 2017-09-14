@@ -14,20 +14,21 @@ using namespace clang;
 using namespace clang::ast_matchers;
 namespace {
 
-    static void emit_warn(DiagnosticsEngine &diagEngine, SourceLocation loc, uint64_t allowed, uint64_t actual)
+    static void emit_warn(DiagnosticsEngine &diagEngine, SourceLocation loc, uint64_t allowed, uint64_t actual, const Expr *expr)
     {
         unsigned diagID = diagEngine.getCustomDiagID(
             diagEngine.getWarningsAsErrors()
             ? DiagnosticsEngine::Error
             : DiagnosticsEngine::Warning,
-            "large assignment of %0 bytes is more than allowed %1 bytes");
+            "large assignment of %0 bytes is more than allowed %1 bytes (assigned type: %2)");
 
         DiagnosticBuilder DB = diagEngine.Report(loc, diagID);
-        DB << std::to_string(actual) << std::to_string(allowed);
+        DB << std::to_string(actual) << std::to_string(allowed) << expr->getType().getAsString();
     }
 
 
     StatementMatcher literalAssignExpr = binaryOperator(hasOperatorName("=")).bind("assignment");
+    StatementMatcher callMatcher = callExpr().bind("call");
 
     class LargeAssignmentMatcher : public MatchFinder::MatchCallback
     {
@@ -36,18 +37,30 @@ namespace {
     public:
         LargeAssignmentMatcher(uint64_t max_allowed_size) : m_max_allowed_size(max_allowed_size) {}
 
-        virtual void run(const MatchFinder::MatchResult &Result)
+        void check(ASTContext *context, const Expr *expr)
         {
-            ASTContext *context = Result.Context;
             DiagnosticsEngine &diagEngine = context->getDiagnostics();
-            const BinaryOperator *binOp = Result.Nodes.getNodeAs<BinaryOperator>("assignment");
-            const Expr *expr = binOp->getRHS();
-            uint64_t actual = context->getTypeInfo(expr->getType()).Width / 8;
+            const uint64_t actual = context->getTypeInfo(expr->getType()).Width / 8;
             if (m_max_allowed_size < actual) {
-                emit_warn(diagEngine, expr->getLocStart(), m_max_allowed_size, actual);
+                emit_warn(diagEngine, expr->getLocStart(), m_max_allowed_size, actual, expr);
             }
         }
 
+        virtual void run(const MatchFinder::MatchResult &Result)
+        {
+            ASTContext *context = Result.Context;
+            const BinaryOperator *binOp = Result.Nodes.getNodeAs<BinaryOperator>("assignment");
+            if (binOp) {
+                check(context, binOp->getRHS());
+            }
+            const CallExpr *callExp = Result.Nodes.getNodeAs<CallExpr>("call");
+            if (callExp) {
+                for (auto arg : callExp->arguments()) {
+                    if (arg->getType().getTypePtr()->isArrayType()) continue;
+                    check(context, arg);
+                }
+            }
+        }
     };
 
     class LargeAssignmentAction : public PluginASTAction {
@@ -58,7 +71,9 @@ namespace {
                                                        llvm::StringRef) override {
 
             MatchFinder *find = new MatchFinder();
-            find->addMatcher(literalAssignExpr, new LargeAssignmentMatcher(m_max_allowed_size));
+            auto m = new LargeAssignmentMatcher(m_max_allowed_size);
+            find->addMatcher(literalAssignExpr, m);
+            find->addMatcher(callMatcher, m);
 
             return find->newASTConsumer();
         }

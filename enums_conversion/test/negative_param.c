@@ -7,4 +7,3 @@ void g(unsigned int x)
 {
     e(x);
 }
-

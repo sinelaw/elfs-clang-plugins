@@ -8,4 +8,3 @@ enum E g(void)
     const enum E res = false;
     return res;
 }
-

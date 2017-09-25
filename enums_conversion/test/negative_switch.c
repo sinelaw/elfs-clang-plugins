@@ -19,4 +19,3 @@ int g(enum A a)
     default: return 4;
     }
 }
-

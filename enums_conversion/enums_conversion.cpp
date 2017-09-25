@@ -140,28 +140,21 @@ namespace {
                            hasParent(varDecl()))),
                  // ==/!=
                  binaryOperator(
-                     anyOf(hasOperatorName("=="),
-                           hasOperatorName("!=")),
-                     hasLHS(expr(ignoringParenImpCasts(
-                                     hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl().bind("enumDecl")).bind("decl_lhs"))))))))),
-                     hasRHS(expr(ignoringParenImpCasts(
-                                     declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(enumDecl(unless(equalsBoundNode("decl_lhs"))).bind("decl_rhs"))))))))),
+                     anyOf(hasOperatorName("=="), hasOperatorName("!=")),
+                     hasRHS(anyOf(expr(ignoringParenImpCasts(declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(decl(enumDecl().bind("enumDecl")).bind("decl_enum"))))))),
+                                  expr(ignoringParenImpCasts( hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl().bind("enumDecl")).bind("decl_enum")))))))))),
+                     unless(hasLHS(anyOf(
+                                       expr(ignoringParenImpCasts(declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(enumDecl(equalsBoundNode("decl_enum")))))))),
+                                       expr(ignoringParenImpCasts(hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl(equalsBoundNode("decl_enum")))))))))))))
+                     ),
                  binaryOperator(
-                     anyOf(hasOperatorName("=="),
-                           hasOperatorName("!=")),
-                     hasRHS(expr(ignoringParenImpCasts(
-                                     hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl().bind("enumDecl")).bind("decl_lhs"))))))))),
-                     hasLHS(expr(ignoringParenImpCasts(
-                                     declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(enumDecl(unless(equalsBoundNode("decl_lhs"))).bind("decl_rhs"))))))))),
-
-                 binaryOperator(
-                     anyOf(hasOperatorName("=="),
-                           hasOperatorName("!=")),
-                     hasRHS(expr(ignoringParenImpCasts(
-                                     declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(decl(enumDecl().bind("enumDecl")).bind("decl_lhs")))))))),
-                         hasLHS(expr(ignoringParenImpCasts(
-                         declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(enumDecl(unless(equalsBoundNode("decl_lhs"))).bind("decl_rhs")))))))))
-
+                     anyOf(hasOperatorName("=="), hasOperatorName("!=")),
+                     hasLHS(anyOf(expr(ignoringParenImpCasts(declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(decl(enumDecl().bind("enumDecl")).bind("decl_enum"))))))),
+                                  expr(ignoringParenImpCasts( hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl().bind("enumDecl")).bind("decl_enum")))))))))),
+                     unless(hasRHS(anyOf(
+                                       expr(ignoringParenImpCasts(declRefExpr(hasDeclaration(enumConstantDecl(hasDeclContext(enumDecl(equalsBoundNode("decl_enum")))))))),
+                                       expr(ignoringParenImpCasts(hasType(qualType(hasCanonicalType(qualType(hasDeclaration(decl(enumDecl(equalsBoundNode("decl_enum")))))))))))))
+                     )
                  ),
              unless(isExpansionInSystemHeader()))
         .bind("problem");

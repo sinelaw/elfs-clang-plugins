@@ -7,4 +7,3 @@ bool g(void)
 {
     return A;
 }
-

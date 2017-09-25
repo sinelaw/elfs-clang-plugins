@@ -7,4 +7,3 @@ void g(void)
 {
     e(0);
 }
-

@@ -7,4 +7,3 @@ void g(bool b)
 {
     e(b ? A : 0);
 }
-

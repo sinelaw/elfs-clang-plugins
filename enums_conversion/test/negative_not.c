@@ -7,4 +7,3 @@ bool g(enum E x)
 {
     return (!x);
 }
-

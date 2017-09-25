@@ -9,4 +9,3 @@ bool g(void)
     res = A;
     return res;
 }
-

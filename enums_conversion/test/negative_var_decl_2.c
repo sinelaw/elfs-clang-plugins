@@ -8,4 +8,3 @@ bool g(void)
     const bool res = A;
     return res;
 }
-

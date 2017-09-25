@@ -10,4 +10,3 @@ bool g(void)
     }
     return false;
 }
-

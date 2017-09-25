@@ -7,4 +7,3 @@ enum E g(void)
 {
     return 1;
 }
-

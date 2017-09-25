@@ -9,4 +9,3 @@ enum E g(void)
     res = false;
     return res;
 }
-

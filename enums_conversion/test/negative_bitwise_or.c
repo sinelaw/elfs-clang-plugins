@@ -8,4 +8,3 @@ void g(void)
     e(A | (B | 1));
 
 }
-

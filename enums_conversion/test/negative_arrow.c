@@ -11,4 +11,3 @@ void g(struct bar *b)
 {
     e(b->val);
 }
-

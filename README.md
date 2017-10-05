@@ -42,6 +42,8 @@ See `CFLAG_CLANG_PLUGINS` in `plugins.mk` for the full command line argument for
 
 ## enums_conversion
 
+(Check (enums_conversion/README.md)[enums_conversion/README.md] for more information about the enums_conversion plugin.)
+
 In C, enum types are implicitly convertible to other integral types. The following code compiles without warnings, even
 with `-Wall -Wextra` (tested on GCC 6.3 & clang 3.7):
 

@@ -1,5 +1,7 @@
 #include "../plugins_common.h"
 
+#include <set>
+
 #include <clang/Frontend/FrontendPluginRegistry.h>
 #include <clang/ASTMatchers/ASTMatchFinder.h>
 #include <clang/AST/ASTContext.h>

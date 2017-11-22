@@ -1,0 +1,18 @@
+language: c++
+os: linux
+sudo: false
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - clang-5.0
+      - libclang-5.0-dev
+      - llvm-5.0-tools
+    sources:
+      - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-5.0 main'
+        key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+
+script:
+- make
+- make tests

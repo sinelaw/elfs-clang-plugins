@@ -1,7 +1,7 @@
 include plugins.mk
 
 MKDIR=mkdir -p
-CC=clang -Werror -Wall -Wextra -g ${CFLAG_CLANG_PLUGINS}
+CC=/usr/bin/clang-5.0 -Werror -Wall -Wextra -g ${CFLAG_CLANG_PLUGINS}
 
 
 .PHONY: $./buildonly $./default

@@ -1,10 +1,10 @@
 # Build C++ code that uses the clang libraries, and thus need the LLVM config flags
 CXX_WITH_LLVM_CONFIG=\
-    g++ ${CFLAGS_GCC} `llvm-config-64 --cxxflags` -O2 -g "$<" -o "$@" -c -Wall -Wextra -Wno-unused -Wno-strict-aliasing -Werror
+    clang++-5.0 `llvm-config-5.0 --cxxflags` -g "$<" -o "$@" -c 
 
 CXX_LINK_WITH_LLVM_CONFIG=\
-    g++ ${LDFLAGS_GCC} `llvm-config-64 --ldflags` -O2 -g \
-    $^ -o "$@" -lffi -lm  -ltinfo -lz -lpthread -ldl
+    clang++-5.0 `llvm-config-5.0 --ldflags` -g \
+    $^ -o "$@" -lffi -lm  -ltinfo -lpthread -ldl
 
 MKDIR=mkdir -p
 
